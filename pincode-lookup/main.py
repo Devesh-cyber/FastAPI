@@ -46,3 +46,13 @@ def lookup_bulk(request: BulkRequest):
             result = results,
             missing = missed
         )
+
+# Forntend
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # tighten this for production
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
