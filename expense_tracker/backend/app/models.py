@@ -34,3 +34,21 @@ class ExpenseTrackerRead(SQLModel):
     expense_date: date
     description: str
     created_at: datetime
+
+class ExpenseTrackerList(SQLModel):
+    '''Read the list of expenses'''
+
+    count: int 
+    transactions: list[ExpenseTrackerRead]
+    message: str = "Expense Retrieved Successfully"
+
+
+class ExpenseTrackerUpdate(SQLModel):
+    '''Update the expense transactions'''
+
+    title: str
+    amount: float
+    category: str
+    payment_method: str
+    expense_date: date
+    description: str
