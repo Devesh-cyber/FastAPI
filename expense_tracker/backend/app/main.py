@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.router import router as expense_router
+from app.expense_router import router as expense_router
+from app.analyze_router import router as analyze_router
 from contextlib import asynccontextmanager
 from app.database import create_table
 
@@ -17,6 +18,7 @@ app = FastAPI(
 
 
 app.include_router(expense_router)
+app.include_router(analyze_router)
 
 @app.get('/')
 def root():
