@@ -1,5 +1,7 @@
 from sqlmodel import SQLModel, Field
 from datetime import datetime, date
+from app.enum import PaymentMethod, ExpenseCategory
+from sqlalchemy import Column, Enum
 
 class ExpenseTracker(SQLModel, table=True):
     '''Expense Tracker'''
@@ -7,8 +9,23 @@ class ExpenseTracker(SQLModel, table=True):
     id : int | None = Field(default=None, description='The ID of the transaction', primary_key=True)
     title : str = Field(min_length=1, description='The title of the transaction')
     amount : float = Field(ge=0, description='The amount of the transaction')
-    category : str = Field(min_length=1, description='The category of the transaction')
-    payment_method : str = Field(min_length=1, description='Method by which payment was done')
+    category: ExpenseCategory = Field(
+    sa_column=Column(
+        Enum(
+            ExpenseCategory,
+            values_callable=lambda enum: [e.value for e in enum]
+        )
+    )
+)
+
+    payment_method: PaymentMethod = Field(
+        sa_column=Column(
+            Enum(
+                PaymentMethod,
+                values_callable=lambda enum: [e.value for e in enum]
+            )
+        )
+    )
     expense_date: date = Field(default_factory=date.today)
     description : str = Field(min_length=1, description='Describe the payment transaction')
     created_at : datetime = Field(default_factory=datetime.now)
@@ -18,8 +35,23 @@ class ExpenseTrackerCreate(SQLModel):
 
     title: str = Field(min_length=1)
     amount: float = Field(ge=0)
-    category: str
-    payment_method: str
+    category: ExpenseCategory = Field(
+    sa_column=Column(
+        Enum(
+            ExpenseCategory,
+            values_callable=lambda enum: [e.value for e in enum]
+        )
+    )
+)
+
+    payment_method: PaymentMethod = Field(
+        sa_column=Column(
+            Enum(
+                PaymentMethod,
+                values_callable=lambda enum: [e.value for e in enum]
+            )
+        )
+    )
     expense_date: date
     description: str
 
@@ -28,9 +60,24 @@ class ExpenseTrackerRead(SQLModel):
 
     id : int 
     title: str
-    amount: float
-    category: str
-    payment_method: str
+    category: ExpenseCategory = Field(
+    sa_column=Column(
+        Enum(
+            ExpenseCategory,
+            values_callable=lambda enum: [e.value for e in enum]
+        )
+    )
+)
+
+    payment_method: PaymentMethod = Field(
+        sa_column=Column(
+            Enum(
+                PaymentMethod,
+                values_callable=lambda enum: [e.value for e in enum]
+            )
+        )
+    )
+    payment_method: PaymentMethod
     expense_date: date
     description: str
     created_at: datetime
@@ -48,8 +95,23 @@ class ExpenseTrackerUpdate(SQLModel):
 
     title: str
     amount: float
-    category: str
-    payment_method: str
+    category: ExpenseCategory = Field(
+    sa_column=Column(
+        Enum(
+            ExpenseCategory,
+            values_callable=lambda enum: [e.value for e in enum]
+        )
+    )
+)
+
+    payment_method: PaymentMethod = Field(
+        sa_column=Column(
+            Enum(
+                PaymentMethod,
+                values_callable=lambda enum: [e.value for e in enum]
+            )
+        )
+    )
     expense_date: date
     description: str
 
