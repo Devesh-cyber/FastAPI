@@ -78,6 +78,7 @@ class ExpenseTrackerRead(SQLModel):
         )
     )
     payment_method: PaymentMethod
+    amount: float
     expense_date: date
     description: str
     created_at: datetime

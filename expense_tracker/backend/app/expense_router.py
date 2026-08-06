@@ -63,36 +63,3 @@ def update_expense(id: int, updated_exp: ExpenseTrackerUpdate, session: Session 
     session.refresh(expense)
     return expense
 
-
-@router.get('/operations',response_model=ExpenseTrackerList)
-def get_expenses(
-     category: Optional[ExpenseCategory] = None,
-     payment_method: Optional[PaymentMethod] = None,
-     min_amount: Optional[float] = None,
-     max_amount: Optional[float] = None,
-     expense_date: Optional[date] = None,
-     session: Session = Depends(get_session)
-):
-    query = select(ExpenseTracker)
-
-    if category:
-          query = query.where(ExpenseTracker.category == category)
-
-    if payment_method:
-         query = query.where(ExpenseTracker.payment_method == payment_method)
-
-    if min_amount is not None:
-         query = query.where(ExpenseTracker.amount >= min_amount)
-
-    if max_amount is not None:
-         query = query.where(ExpenseTracker.amount <= max_amount) 
-
-    if expense_date:
-         query = query.where(ExpenseTracker.expense_date == expense_date)
-
-    expenses = session.exec(query).all()
-
-    return ExpenseTrackerList(
-    count=len(expenses),
-    transactions=expenses
-)
