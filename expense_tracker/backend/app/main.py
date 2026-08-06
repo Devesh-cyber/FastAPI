@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.expense_router import router as expense_router
 from app.analyze_router import router as analyze_router
 from app.operation_router import router as operation_router
@@ -17,6 +18,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 app.include_router(expense_router)
 app.include_router(analyze_router)

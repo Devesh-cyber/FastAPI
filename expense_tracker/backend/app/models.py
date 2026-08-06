@@ -119,7 +119,7 @@ class ExpenseTrackerUpdate(SQLModel):
 class ExpenseTrackerAnalysis(SQLModel):
     '''Analyze all the expense transactions'''
 
-    total_transactions: int = Field(ge=0, description='Total number of transactions occured')
-    total_expense: int = Field(ge=0, description='Total amount of expense transaction')
-    average_expense: int = Field(ge=0, description='The average of all the expense transactions dont till now')
-    highest_expense: int = Field(ge=0, description='Highest expense among all expense transactions')
+    total_transactions: float = Field(ge=0, description='Total number of transactions occured')
+    total_expense: float = Field(ge=0, description='Total amount of expense transaction')
+    average_expense: float = Field(ge=0, description='The average of all the expense transactions dont till now')
+    highest_expense: float = Field(ge=0, description='Highest expense among all expense transactions')

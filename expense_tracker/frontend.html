@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger — Expense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecda;
+    --paper-alt: #eadfc2;
+    --paper-line: #c9bb98;
+    --ink: #262019;
+    --ink-soft: #6b6153;
+    --green: #1f3d33;
+    --green-dark: #142a23;
+    --red: #9c3f34;
+    --red-dark: #7c322a;
+    --brass: #a8842f;
+    --sage: #5f7d63;
+    --radius: 3px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    background-image: radial-gradient(circle at 1px 1px, var(--paper-line) 1px, transparent 0);
+    background-size: 26px 26px;
+  }
+
+  .app { max-width: 780px; margin: 0 auto; padding-bottom: 80px; }
+
+  /* ---------- Header ---------- */
+  .ledger-head {
+    background: var(--green);
+    color: var(--paper);
+    padding: 36px 28px 30px;
+    position: relative;
+  }
+
+  .head-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+
+  .brand-mark {
+    font-family: 'Fraunces', serif;
+    font-size: 34px;
+    font-style: italic;
+    color: var(--brass);
+    line-height: 1;
+  }
+
+  .brand h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 30px;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  .brand .tagline {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    color: #cfd9d2;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  .stat-block { text-align: right; }
+
+  .stat-label {
+    display: block;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #9fb3a7;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--paper);
+  }
+
+  .tear {
+    position: absolute;
+    bottom: -13px;
+    left: 0;
+    width: 100%;
+    height: 14px;
+    background: var(--green);
+    clip-path: polygon(
+      0% 0%, 4% 100%, 8% 0%, 12% 100%, 16% 0%, 20% 100%, 24% 0%, 28% 100%,
+      32% 0%, 36% 100%, 40% 0%, 44% 100%, 48% 0%, 52% 100%, 56% 0%, 60% 100%,
+      64% 0%, 68% 100%, 72% 0%, 76% 100%, 80% 0%, 84% 100%, 88% 0%, 92% 100%,
+      96% 0%, 100% 100%, 100% 0%
+    );
+  }
+
+  /* ---------- Base URL ---------- */
+  .base-url-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 22px 28px 0;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+
+  .base-url-bar input {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    border: none;
+    border-bottom: 1px solid var(--paper-line);
+    background: transparent;
+    color: var(--ink);
+    width: 190px;
+    padding: 2px 0;
+  }
+  .base-url-bar input:focus { outline: none; border-bottom-color: var(--brass); }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 28px 0;
+    border-bottom: 2px solid var(--ink);
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    background: none;
+    border: none;
+    padding: 10px 16px 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active { color: var(--ink); font-weight: 600; }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 8px; right: 8px;
+    height: 3px;
+    background: var(--brass);
+  }
+
+  main { padding: 26px 28px 0; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---------- Cards / forms ---------- */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    padding: 22px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  .card::before {
+    content: attr(data-tag);
+    position: absolute;
+    top: -10px;
+    left: 18px;
+    background: var(--paper);
+    padding: 0 8px;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .field-grid .span2 { grid-column: 1 / -1; }
+
+  .field { margin-bottom: 4px; }
+
+  label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    padding: 9px 10px;
+    border: 1px solid var(--ink);
+    background: #fffdf8;
+    color: var(--ink);
+    border-radius: var(--radius);
+  }
+
+  textarea { resize: vertical; min-height: 60px; font-family: 'Inter', sans-serif; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--brass); outline-offset: 1px; }
+
+  .form-actions { margin-top: 16px; display: flex; gap: 10px; align-items: center; }
+
+  button.primary {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    background: var(--green);
+    color: var(--paper);
+    border: none;
+    padding: 11px 20px;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  button.primary:hover { background: var(--green-dark); }
+  button.primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  button.ghost {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    background: none;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 10px 16px;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  button.ghost:hover { background: var(--paper-alt); }
+
+  .form-note { font-size: 12px; color: var(--sage); }
+
+  /* ---------- Error / empty ---------- */
+  .error-box {
+    border: 1px solid var(--red);
+    background: #f7e8e4;
+    color: var(--red-dark);
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: var(--radius);
+    margin-top: 14px;
+  }
+
+  .empty-note {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    text-align: center;
+    padding: 34px 10px;
+    font-size: 15px;
+  }
+
+  /* ---------- Register mode chips ---------- */
+  .mode-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .mode-chip {
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    padding: 7px 14px;
+    border: 1px solid var(--ink);
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 999px;
+  }
+  .mode-chip.active { background: var(--ink); color: var(--paper); }
+
+  .mode-panel { display: none; }
+  .mode-panel.active { display: block; }
+  .inline-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .inline-row .field { flex: 1; min-width: 140px; }
+
+  /* ---------- Ledger rows ---------- */
+  .register-list { margin-top: 6px; }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 78px 1fr auto;
+    gap: 14px;
+    align-items: start;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--paper-line);
+  }
+  .ledger-row:first-child { border-top: 1px solid var(--ink); }
+
+  .row-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding-top: 3px;
+  }
+
+  .row-main .row-title {
+    font-weight: 600;
+    font-size: 14.5px;
+    margin-bottom: 4px;
+  }
+
+  .row-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  .row-tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  .stamp {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1.5px dashed var(--brass);
+    color: var(--brass);
+    padding: 3px 9px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  .ledger-row:nth-child(even) .stamp { transform: rotate(-2deg); }
+  .ledger-row:nth-child(odd) .stamp { transform: rotate(2deg); }
+
+  .pay-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
+    color: var(--sage);
+  }
+
+  .row-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+  .row-amount {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--red);
+    border-right: 3px solid var(--red);
+    padding-right: 8px;
+  }
+
+  .row-actions { display: flex; gap: 6px; }
+
+  .icon-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    background: none;
+    border: 1px solid var(--paper-line);
+    color: var(--ink-soft);
+    padding: 4px 9px;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .icon-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .icon-btn.danger.confirming { background: var(--red); color: var(--paper); border-color: var(--red); }
+
+  .register-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0 4px;
+    margin-top: 6px;
+    border-top: 2px solid var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  /* ---------- Edit row ---------- */
+  .edit-row { grid-template-columns: 1fr; }
+  .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .edit-grid .span2 { grid-column: 1 / -1; }
+
+  /* ---------- Summary ---------- */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .stat-card {
+    background: var(--green);
+    color: var(--paper);
+    padding: 20px;
+    border-radius: var(--radius);
+  }
+  .stat-card .s-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a9bcae;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .stat-card .s-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .stat-card.accent { background: var(--red); }
+  .stat-card.accent .s-label { color: #e5c3bd; }
+
+  .refresh-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+
+  @media (max-width: 560px) {
+    .field-grid, .edit-grid { grid-template-columns: 1fr; }
+    .stat-cards { grid-template-columns: 1fr; }
+    .ledger-row { grid-template-columns: 1fr; }
+    .row-date { padding-top: 0; }
+    .row-right { align-items: flex-start; }
+    .row-amount { border-right: none; border-left: 3px solid var(--red); padding-left: 8px; padding-right: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="ledger-head">
+    <div class="head-top">
+      <div class="brand">
+        <span class="brand-mark">§</span>
+        <div>
+          <h1>Ledger</h1>
+          <p class="tagline">Every rupee, accounted for.</p>
+        </div>
+      </div>
+      <div class="stat-block">
+        <span class="stat-label">Total recorded</span>
+        <span class="stat-value" id="headerTotal">—</span>
+      </div>
+    </div>
+    <div class="tear"></div>
+  </header>
+
+  <div class="base-url-bar">
+    <label for="baseUrl" style="margin:0;">API base</label>
+    <input type="text" id="baseUrl" value="http://127.0.0.1:8000">
+  </div>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="new">New Entry</button>
+    <button class="tab-btn" data-tab="view">View</button>
+    <button class="tab-btn" data-tab="operations">Operations</button>
+    <button class="tab-btn" data-tab="summary">Analysis</button>
+  </nav>
+
+  <main>
+
+    <!-- ============ NEW ENTRY ============ -->
+    <section id="tab-new" class="tab-panel active">
+      <div class="card" data-tag="Post an entry">
+        <div class="field-grid">
+          <div class="field span2">
+            <label for="f-title">Title</label>
+            <input type="text" id="f-title" placeholder="e.g. Auto to college">
+          </div>
+          <div class="field">
+            <label for="f-amount">Amount (₹)</label>
+            <input type="number" id="f-amount" min="0" step="0.01" placeholder="0.00">
+          </div>
+          <div class="field">
+            <label for="f-date">Date</label>
+            <input type="date" id="f-date">
+          </div>
+          <div class="field">
+            <label for="f-category">Category</label>
+            <select id="f-category"></select>
+          </div>
+          <div class="field">
+            <label for="f-payment">Payment method</label>
+            <select id="f-payment"></select>
+          </div>
+          <div class="field span2">
+            <label for="f-desc">Description</label>
+            <textarea id="f-desc" placeholder="What was this for?"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="primary" id="submitNew">Post entry</button>
+          <span class="form-note" id="newNote"></span>
+        </div>
+        <div id="newError"></div>
+      </div>
+    </section>
+
+    <!-- ============ VIEW ============ -->
+    <section id="tab-view" class="tab-panel">
+      <div class="mode-row">
+        <button class="mode-chip active" data-mode="all" data-group="view">All entries</button>
+        <button class="mode-chip" data-mode="byid" data-group="view">By ID</button>
+      </div>
+
+      <div class="mode-panel active" id="mode-view-all">
+        <div class="inline-row">
+          <button class="ghost" id="btnAll">Refresh register</button>
+        </div>
+      </div>
+
+      <div class="mode-panel" id="mode-view-byid">
+        <div class="inline-row">
+          <div class="field" style="flex:1; max-width:160px;">
+            <label for="v-id">Transaction ID</label>
+            <input type="number" id="v-id" min="1" placeholder="e.g. 12">
+          </div>
+          <button class="primary" id="btnById">Look up</button>
+        </div>
+      </div>
+
+      <div id="viewError"></div>
+      <div class="register-list" id="viewList"></div>
+      <div class="register-total" id="viewTotal" style="display:none;">
+        <span>Entries shown</span>
+        <span id="viewTotalValue"></span>
+      </div>
+    </section>
+
+    <!-- ============ OPERATIONS ============ -->
+    <section id="tab-operations" class="tab-panel">
+      <div class="mode-row">
+        <button class="mode-chip active" data-mode="search" data-group="ops">Search</button>
+        <button class="mode-chip" data-mode="filter" data-group="ops">Filter</button>
+        <button class="mode-chip" data-mode="sort" data-group="ops">Sort</button>
+      </div>
+
+      <div class="mode-panel active" id="mode-ops-search">
+        <div class="inline-row">
+          <div class="field" style="flex:3;">
+            <label for="s-query">Search title or description</label>
+            <input type="text" id="s-query" placeholder="e.g. auto, groceries…">
+          </div>
+          <button class="primary" id="btnSearch">Search</button>
+        </div>
+      </div>
+
+      <div class="mode-panel" id="mode-ops-filter">
+        <div class="field-grid">
+          <div class="field">
+            <label for="ft-category">Category</label>
+            <select id="ft-category"><option value="">Any</option></select>
+          </div>
+          <div class="field">
+            <label for="ft-payment">Payment method</label>
+            <select id="ft-payment"><option value="">Any</option></select>
+          </div>
+          <div class="field">
+            <label for="ft-min">Min amount</label>
+            <input type="number" id="ft-min" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="ft-max">Max amount</label>
+            <input type="number" id="ft-max" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="ft-date">Exact date</label>
+            <input type="date" id="ft-date">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="primary" id="btnFilter">Apply filter</button>
+        </div>
+      </div>
+
+      <div class="mode-panel" id="mode-ops-sort">
+        <div class="inline-row">
+          <div class="field">
+            <label for="so-field">Sort by</label>
+            <select id="so-field">
+              <option value="amount">Amount</option>
+              <option value="created_at">Created at</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="so-order">Order</label>
+            <select id="so-order">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+          <button class="primary" id="btnSort">Sort</button>
+        </div>
+      </div>
+
+      <div id="opsError"></div>
+      <div class="register-list" id="opsList"></div>
+      <div class="register-total" id="opsTotal" style="display:none;">
+        <span>Entries shown</span>
+        <span id="opsTotalValue"></span>
+      </div>
+    </section>
+
+    <!-- ============ SUMMARY ============ -->
+    <section id="tab-summary" class="tab-panel">
+      <div class="refresh-row">
+        <button class="ghost" id="btnSummaryRefresh">Refresh</button>
+      </div>
+      <div id="summaryError"></div>
+      <div class="stat-cards" id="statCards"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const CATEGORIES = ['FOOD','TRAVEL','SHOPPING','HEALTH','EDUCATION','BILLS','ENTERTAINMENT','OTHER'];
+  const PAYMENTS = ['CASH','UPI','CREDIT_CARD','DEBIT_CARD','NET_BANKING'];
+
+  const baseUrlInput = document.getElementById('baseUrl');
+  const apiBase = () => baseUrlInput.value.replace(/\/$/, '');
+
+  function fmtMoney(n) {
+    const num = Number(n);
+    if (Number.isNaN(num)) return '—';
+    return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtDate(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    if (Number.isNaN(dt.getTime())) return d;
+    return dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  function labelize(s) {
+    return s.replace(/_/g, ' ').replace(/\w\S*/g, t => t.charAt(0) + t.slice(1).toLowerCase());
+  }
+
+  function populateSelect(sel, values, includeAny) {
+    values.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = labelize(v);
+      sel.appendChild(opt);
+    });
+  }
+  populateSelect(document.getElementById('f-category'), CATEGORIES);
+  populateSelect(document.getElementById('f-payment'), PAYMENTS);
+  populateSelect(document.getElementById('ft-category'), CATEGORIES);
+  populateSelect(document.getElementById('ft-payment'), PAYMENTS);
+  document.getElementById('f-date').valueAsDate = new Date();
+
+  // ---- generic fetch helper ----
+  async function apiFetch(path, options = {}) {
+    let res;
+    try {
+      res = await fetch(`${apiBase()}${path}`, options);
+    } catch (err) {
+      throw { network: true, message: 'Could not reach the ledger server. Check the API base URL and that the FastAPI server has CORS enabled for this page.' };
+    }
+    let data = null;
+    try { data = await res.json(); } catch (e) { /* no body */ }
+    if (!res.ok) {
+      let message = 'Something went wrong.';
+      if (data) {
+        if (Array.isArray(data.detail)) {
+          message = data.detail.map(d => `${(d.loc || []).slice(-1)[0] || ''}: ${d.msg}`).join('; ');
+        } else if (typeof data.detail === 'string') {
+          message = data.detail;
+        } else if (data.message) {
+          message = data.message;
+        }
+      }
+      throw { status: res.status, message, data };
+    }
+    return data;
+  }
+
+  function errorBox(msg) {
+    return `<div class="error-box">${msg}</div>`;
+  }
+
+  // ============ TABS ============
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+      if (btn.dataset.tab === 'view') loadAll();
+      if (btn.dataset.tab === 'summary') loadSummary();
+    });
+  });
+
+  // ============ NEW ENTRY ============
+  const newError = document.getElementById('newError');
+  const newNote = document.getElementById('newNote');
+  document.getElementById('submitNew').addEventListener('click', async () => {
+    const btn = document.getElementById('submitNew');
+    newError.innerHTML = '';
+    newNote.textContent = '';
+
+    const payload = {
+      title: document.getElementById('f-title').value.trim(),
+      amount: parseFloat(document.getElementById('f-amount').value),
+      category: document.getElementById('f-category').value,
+      payment_method: document.getElementById('f-payment').value,
+      expense_date: document.getElementById('f-date').value,
+      description: document.getElementById('f-desc').value.trim()
+    };
+
+    if (!payload.title) { newError.innerHTML = errorBox('Give the entry a title.'); return; }
+    if (!(payload.amount >= 0)) { newError.innerHTML = errorBox('Enter a valid amount.'); return; }
+    if (!payload.description) { newError.innerHTML = errorBox('Add a short description.'); return; }
+    if (!payload.expense_date) { newError.innerHTML = errorBox('Pick a date.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Posting…';
+    try {
+      await apiFetch('/expenses/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      newNote.textContent = 'Entry posted to the ledger.';
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-amount').value = '';
+      document.getElementById('f-desc').value = '';
+      document.getElementById('f-date').valueAsDate = new Date();
+      refreshHeaderTotal();
+    } catch (err) {
+      newError.innerHTML = errorBox(err.message || 'Could not post this entry.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Post entry';
+    }
+  });
+
+  // ============ REGISTER ============
+  document.querySelectorAll('.mode-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const group = chip.dataset.group;
+      document.querySelectorAll(`.mode-chip[data-group="${group}"]`).forEach(c => c.classList.remove('active'));
+      document.querySelectorAll(`.mode-panel[id^="mode-${group}-"]`).forEach(p => p.classList.remove('active'));
+      chip.classList.add('active');
+      document.getElementById(`mode-${group}-${chip.dataset.mode}`).classList.add('active');
+    });
+  });
+
+  const panels = {
+    view: {
+      list: document.getElementById('viewList'),
+      error: document.getElementById('viewError'),
+      total: document.getElementById('viewTotal'),
+      totalValue: document.getElementById('viewTotalValue'),
+      transactions: []
+    },
+    ops: {
+      list: document.getElementById('opsList'),
+      error: document.getElementById('opsError'),
+      total: document.getElementById('opsTotal'),
+      totalValue: document.getElementById('opsTotalValue'),
+      transactions: []
+    }
+  };
+
+  function renderRegister(panelKey, transactions, emptyMessage) {
+    const p = panels[panelKey];
+    p.transactions = transactions || [];
+    p.error.innerHTML = '';
+    if (!transactions || transactions.length === 0) {
+      p.list.innerHTML = `<div class="empty-note">${emptyMessage || 'Nothing here yet. Post an entry to start the ledger.'}</div>`;
+      p.total.style.display = 'none';
+      return;
+    }
+    p.list.innerHTML = transactions.map(t => renderRow(t)).join('');
+    attachRowHandlers(panelKey);
+    const sum = transactions.reduce((acc, t) => acc + Number(t.amount || 0), 0);
+    p.totalValue.textContent = fmtMoney(sum);
+    p.total.style.display = 'flex';
+  }
+
+  function renderRow(t) {
+    return `
+      <div class="ledger-row" data-id="${t.id}">
+        <div class="row-date">${fmtDate(t.expense_date)}</div>
+        <div class="row-main">
+          <div class="row-title">${escapeHtml(t.title)}</div>
+          <div class="row-desc">${escapeHtml(t.description || '')}</div>
+          <div class="row-tags">
+            <span class="stamp">${labelize(t.category)}</span>
+            <span class="pay-tag">${labelize(t.payment_method)}</span>
+          </div>
+        </div>
+        <div class="row-right">
+          <div class="row-amount">− ${fmtMoney(t.amount)}</div>
+          <div class="row-actions">
+            <button class="icon-btn edit-btn" data-id="${t.id}">Edit</button>
+            <button class="icon-btn danger delete-btn" data-id="${t.id}">Delete</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function attachRowHandlers(panelKey) {
+    const p = panels[panelKey];
+    p.list.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleDelete(panelKey, btn));
+    });
+    p.list.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => enterEditMode(panelKey, btn.dataset.id));
+    });
+  }
+
+  function handleDelete(panelKey, btn) {
+    if (!btn.classList.contains('confirming')) {
+      btn.classList.add('confirming');
+      btn.textContent = 'Confirm?';
+      btn._timeout = setTimeout(() => {
+        btn.classList.remove('confirming');
+        btn.textContent = 'Delete';
+      }, 4000);
+      return;
+    }
+    clearTimeout(btn._timeout);
+    const id = btn.dataset.id;
+    deleteEntry(panelKey, id);
+  }
+
+  async function deleteEntry(panelKey, id) {
+    const p = panels[panelKey];
+    p.error.innerHTML = '';
+    try {
+      await apiFetch(`/expenses/remove/${id}`, { method: 'DELETE' });
+      const remaining = p.transactions.filter(t => String(t.id) !== String(id));
+      renderRegister(panelKey, remaining);
+      refreshHeaderTotal();
+    } catch (err) {
+      p.error.innerHTML = errorBox(err.message || 'Could not delete this entry.');
+    }
+  }
+
+  function enterEditMode(panelKey, id) {
+    const p = panels[panelKey];
+    const t = p.transactions.find(x => String(x.id) === String(id));
+    if (!t) return;
+    const row = p.list.querySelector(`.ledger-row[data-id="${id}"]`);
+    row.classList.add('edit-row');
+    row.innerHTML = `
+      <div class="edit-grid">
+        <div class="field span2">
+          <label>Title</label>
+          <input type="text" class="e-title" value="${escapeHtml(t.title)}">
+        </div>
+        <div class="field">
+          <label>Amount (₹)</label>
+          <input type="number" min="0" step="0.01" class="e-amount" value="${t.amount}">
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" class="e-date" value="${t.expense_date}">
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select class="e-category"></select>
+        </div>
+        <div class="field">
+          <label>Payment method</label>
+          <select class="e-payment"></select>
+        </div>
+        <div class="field span2">
+          <label>Description</label>
+          <textarea class="e-desc">${escapeHtml(t.description || '')}</textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="primary e-save">Save changes</button>
+        <button class="ghost e-cancel">Cancel</button>
+      </div>
+      <div class="e-error"></div>
+    `;
+    const catSel = row.querySelector('.e-category');
+    const paySel = row.querySelector('.e-payment');
+    populateSelect(catSel, CATEGORIES);
+    populateSelect(paySel, PAYMENTS);
+    catSel.value = t.category;
+    paySel.value = t.payment_method;
+
+    row.querySelector('.e-cancel').addEventListener('click', () => {
+      row.classList.remove('edit-row');
+      row.outerHTML = renderRow(t);
+      attachRowHandlers(panelKey);
+    });
+
+    row.querySelector('.e-save').addEventListener('click', async () => {
+      const saveBtn = row.querySelector('.e-save');
+      const errBox = row.querySelector('.e-error');
+      errBox.innerHTML = '';
+      const updated = {
+        title: row.querySelector('.e-title').value.trim(),
+        amount: parseFloat(row.querySelector('.e-amount').value),
+        category: catSel.value,
+        payment_method: paySel.value,
+        expense_date: row.querySelector('.e-date').value,
+        description: row.querySelector('.e-desc').value.trim()
+      };
+      if (!updated.title || !(updated.amount >= 0) || !updated.expense_date || !updated.description) {
+        errBox.innerHTML = errorBox('Fill in every field before saving.');
+        return;
+      }
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+      try {
+        const saved = await apiFetch(`/expenses/update/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+        const idx = p.transactions.findIndex(x => String(x.id) === String(id));
+        if (idx > -1) p.transactions[idx] = saved;
+        row.classList.remove('edit-row');
+        row.outerHTML = renderRow(saved);
+        attachRowHandlers(panelKey);
+        refreshHeaderTotal();
+      } catch (err) {
+        errBox.innerHTML = errorBox(err.message || 'Could not save changes.');
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save changes';
+      }
+    });
+  }
+
+  async function loadAll() {
+    const p = panels.view;
+    p.error.innerHTML = '';
+    p.list.innerHTML = `<div class="empty-note">Loading the register…</div>`;
+    try {
+      const data = await apiFetch('/expenses/view');
+      renderRegister('view', data.transactions || []);
+    } catch (err) {
+      if (err.status === 404) {
+        renderRegister('view', []);
+      } else {
+        p.list.innerHTML = '';
+        p.error.innerHTML = errorBox(err.message || 'Could not load the register.');
+      }
+    }
+  }
+  document.getElementById('btnAll').addEventListener('click', loadAll);
+
+  document.getElementById('btnById').addEventListener('click', async () => {
+    const p = panels.view;
+    const idVal = document.getElementById('v-id').value.trim();
+    if (!idVal) { p.error.innerHTML = errorBox('Enter a transaction ID.'); return; }
+    p.error.innerHTML = '';
+    p.list.innerHTML = `<div class="empty-note">Looking up #${escapeHtml(idVal)}…</div>`;
+    try {
+      const entry = await apiFetch(`/expenses/view/${idVal}`);
+      renderRegister('view', [entry]);
+    } catch (err) {
+      if (err.status === 404) {
+        renderRegister('view', [], `No entry with ID ${escapeHtml(idVal)}.`);
+      } else {
+        p.list.innerHTML = '';
+        p.error.innerHTML = errorBox(err.message || 'Could not look up this entry.');
+      }
+    }
+  });
+
+  document.getElementById('btnSearch').addEventListener('click', async () => {
+    const p = panels.ops;
+    const q = document.getElementById('s-query').value.trim();
+    if (!q) { p.error.innerHTML = errorBox('Type something to search for.'); return; }
+    p.error.innerHTML = '';
+    p.list.innerHTML = `<div class="empty-note">Searching…</div>`;
+    try {
+      const data = await apiFetch(`/expenses/operations/search?search=${encodeURIComponent(q)}`);
+      renderRegister('ops', data.transactions || []);
+    } catch (err) {
+      if (err.status === 404) {
+        renderRegister('ops', [], `Nothing matched “${escapeHtml(q)}.”`);
+      } else {
+        p.list.innerHTML = '';
+        p.error.innerHTML = errorBox(err.message || 'Search failed.');
+      }
+    }
+  });
+
+  document.getElementById('btnFilter').addEventListener('click', async () => {
+    const p = panels.ops;
+    const params = new URLSearchParams();
+    const category = document.getElementById('ft-category').value;
+    const payment = document.getElementById('ft-payment').value;
+    const min = document.getElementById('ft-min').value;
+    const max = document.getElementById('ft-max').value;
+    const date = document.getElementById('ft-date').value;
+    if (category) params.set('category', category);
+    if (payment) params.set('payment_method', payment);
+    if (min) params.set('min_amount', min);
+    if (max) params.set('max_amount', max);
+    if (date) params.set('expense_date', date);
+
+    p.error.innerHTML = '';
+    p.list.innerHTML = `<div class="empty-note">Filtering…</div>`;
+    try {
+      const data = await apiFetch(`/expenses/operations/filter?${params.toString()}`);
+      renderRegister('ops', data.transactions || []);
+    } catch (err) {
+      p.list.innerHTML = '';
+      p.error.innerHTML = errorBox(err.message || 'Could not apply this filter.');
+    }
+  });
+
+  document.getElementById('btnSort').addEventListener('click', async () => {
+    const p = panels.ops;
+    const sortBy = document.getElementById('so-field').value;
+    const order = document.getElementById('so-order').value;
+    p.error.innerHTML = '';
+    p.list.innerHTML = `<div class="empty-note">Sorting…</div>`;
+    try {
+      const data = await apiFetch(`/expenses/operations/sorting?sort_by=${sortBy}&order=${order}`);
+      renderRegister('ops', data.transactions || []);
+    } catch (err) {
+      p.list.innerHTML = '';
+      p.error.innerHTML = errorBox(err.message || 'Could not sort the register.');
+    }
+  });
+
+  // ============ SUMMARY ============
+  const statCards = document.getElementById('statCards');
+  const summaryError = document.getElementById('summaryError');
+
+  async function loadSummary() {
+    summaryError.innerHTML = '';
+    statCards.innerHTML = `<div class="empty-note">Tallying the books…</div>`;
+    try {
+      const data = await apiFetch('/analysis/');
+      statCards.innerHTML = `
+        <div class="stat-card">
+          <span class="s-label">Total transactions</span>
+          <span class="s-value">${data.total_transactions}</span>
+        </div>
+        <div class="stat-card accent">
+          <span class="s-label">Total expense</span>
+          <span class="s-value">${fmtMoney(data.total_expense)}</span>
+        </div>
+        <div class="stat-card">
+          <span class="s-label">Average expense</span>
+          <span class="s-value">${fmtMoney(data.average_expense)}</span>
+        </div>
+        <div class="stat-card accent">
+          <span class="s-label">Highest expense</span>
+          <span class="s-value">${fmtMoney(data.highest_expense)}</span>
+        </div>`;
+    } catch (err) {
+      statCards.innerHTML = '';
+      summaryError.innerHTML = errorBox(err.message || 'Could not load the summary.');
+    }
+  }
+  document.getElementById('btnSummaryRefresh').addEventListener('click', loadSummary);
+
+  // ============ HEADER TOTAL ============
+  async function refreshHeaderTotal() {
+    try {
+      const data = await apiFetch('/analysis/');
+      document.getElementById('headerTotal').textContent = fmtMoney(data.total_expense);
+    } catch (err) {
+      document.getElementById('headerTotal').textContent = '—';
+    }
+  }
+  refreshHeaderTotal();
+</script>
+
+</body>
+</html>
