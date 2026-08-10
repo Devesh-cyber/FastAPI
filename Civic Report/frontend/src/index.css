@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #EDEBE2;
+  color: #16233D;
+  font-family: 'IBM Plex Sans', sans-serif;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(22, 35, 61, 0.055) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+*:focus-visible {
+  outline: 2px solid #C97A2E;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Signature element: the complaint "ticket stub", styled after a physical
+   municipal counter receipt — perforated edge, mono reference number,
+   rubber-stamp status. */
+.ticket {
+  position: relative;
+  background: #FFFFFF;
+  border: 1px solid #D3CEBC;
+  border-radius: 4px;
+}
+
+.ticket::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  border-top: 2px dashed #D3CEBC;
+}
+
+.ticket-perf {
+  border-bottom: 1px dashed #D3CEBC;
+}
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-2deg);
+}
+
+.reduce-motion {
+  transition: none !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
