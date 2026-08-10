@@ -7,7 +7,8 @@ from models.issues import (
     ReadIssues,
     UpdateIssueStatus,
     UpdateIssue,
-    Category
+    Category,
+    Status
     )
 from models.citizen import (
     ReadCitizens, 
@@ -90,7 +91,8 @@ def update_issue(
 @router.delete('/{id}')
 def delete_issue(
     id: int,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    api_key: str = Depends(verify_api_key)
 ):
     issue = session.get(Issues, id)
     if not issue:
@@ -104,7 +106,7 @@ def delete_issue(
 @router.get('/', response_model=list[ReadIssues])
 def read_issues(
     filter_category: Optional[Category] = None,
-    filter_status: Optional[str] = None,
+    filter_status: Optional[Status] = None,
     filter_location: Optional[str] = None,
     session: Session = Depends(get_session)
 ):

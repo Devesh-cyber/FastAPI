@@ -51,7 +51,11 @@ class CreateCitizens(SQLModel):
 class ReadCitizens(SQLModel):
     id: int
     name: str
-    contact_no: str
+    contact_no: str = Field(
+    min_length=10,
+    max_length=10,
+    pattern=r"^\d{10}$"
+)
     locality: str
 
 
