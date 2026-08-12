@@ -1,0 +1,51 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
+  "elements": [
+    {
+      "id": "ivKl1POzb021LIqT0YOKB",
+      "type": "text",
+      "x": 260,
+      "y": 196,
+      "width": 1173.0728759765625,
+      "height": 91.9999999999999,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "index": "a3",
+      "roundness": null,
+      "seed": 980624672,
+      "version": 494,
+      "versionNonce": 1729774880,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1786552160355,
+      "link": null,
+      "locked": false,
+      "text": "A Mumbai-based large-tech startup needs an API for AI-powered contact analysis. Large\nPDF contracts and get structured insights - key clauses identified, risks flagged, and \nrecommendations generated. The system uses Google Gemini to analyse legal document.",
+      "fontSize": 24.533333333333307,
+      "fontFamily": 8,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "containerId": null,
+      "originalText": "A Mumbai-based large-tech startup needs an API for AI-powered contact analysis. Large\nPDF contracts and get structured insights - key clauses identified, risks flagged, and \nrecommendations generated. The system uses Google Gemini to analyse legal document.",
+      "autoResize": true,
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": 20,
+    "gridStep": 5,
+    "gridModeEnabled": false,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

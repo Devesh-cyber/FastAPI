@@ -1,0 +1,1 @@
+MONGODB_URI='mongodb://root:mypassword@localhost:27017/'
