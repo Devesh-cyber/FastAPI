@@ -1,0 +1,100 @@
+1) Core Math
+
+High-school refresh: algebra, trigonometry, geometry.
+
+- Linear algebra: vectors/matrices, cartesian coordinate system, norms, dot product, Gaussian elimination, rank, null space, eigenvalues/eigenvectors, SVD, projections, QR.
+- Calculus: derivatives/gradients, partials, chain rule, integrals, optimization intuition (first/second order). ----(Linear algebra course - fundamentals of linear algebra at lunartech.ai)----
+- Probability & statistics: random variables, mean, median, modes, common distributions (Bernoulli/binomial/normal), Bayes’ rule, expectation/variance, covariance/correlation, LLN & CLT, confidence intervals, hypothesis testing (t/F/χ²), p-values.
+----(fundamentals to statistic course at lunartech.ai)----
+(Nice-to-have) Game theory basics: minimax, Nash equilibrium (useful for GANs).
+
+2) Programming & Software Engineering
+
+- Python for AI: data types/structures, OOP, typing, packaging, virtual envs.
+- Numerical & data libs: NumPy, pandas; vectorization and profiling.
+- Visualization: matplotlib/Plotly.
+- Version control & quality: git/GitHub, testing (pytest), lint/format, docs.
+- OS & tooling: Linux, Bash, Docker; basic networking.
+
+(Nice-to-have) C++/CUDA fundamentals for performance.
+
+3) Data Skills
+
+- Data collection, labeling, and governance.
+- Cleaning & preprocessing: missing data, outliers, scaling/encoding (tabular/text/image/audio).
+- Feature engineering & selection; dimensionality reduction (PCA/UMAP).
+- EDA: summaries, plots, distributions; storytelling with data.
+- Data ethics, privacy, and security (PII handling, GDPR-style concerns).
+
+4) Classical Machine Learning
+
+- Problem framing: supervised vs. unsupervised; regression vs. classification.
+- Algorithms: linear/logistic regression, Naive Bayes, kNN, SVM, decision trees, random forests, gradient boosting (XGBoost/LightGBM), k-means, DBSCAN, hierarchical clustering.
+- Model evaluation: train/val/test, cross-validation; metrics (MAE/MSE/RMSE/R², precision/recall/F1, ROC-AUC, PR-AUC); calibration; handling imbalance.
+- Regularization & selection: L1/L2/ElasticNet, early stopping, feature importance.
+- Interpretability: SHAP/LIME, partial dependence.
+----(fundamentals to  machine learning)----
+
+5) Deep Learning Fundamentals
+
+Neural nets: perceptrons, activations, losses, initialization.
+- Training: forward/backprop; optimizers (SGD/Momentum/RMSProp/Adam/AdamW); schedulers; gradient clipping; mixed precision.
+- Regularization/normalization: dropout, batch/layer norm; residual connections.
+- Architectures: CNNs (conv/pooling), RNN/LSTM/GRU (legacy), attention & Transformers (foundational).
+- Practical skills: PyTorch (primary) and/or TensorFlow; data pipelines; checkpoints.
+
+6) Generative AI & LLMs
+
+- Transformer internals: tokenization, embeddings, positional encodings, self-attention (Q/K/V), decoder/encoder variants.
+- LLM lifecycle: pretraining (AR/MLM), SFT, PEFT (LoRA/QLoRA), RLHF/DPO.
+- Prompting: patterns, templates, function/tool calling, safety constraints.
+- RAG systems: chunking, embeddings, vector DBs (FAISS/pgvector/Milvus), retrieval, reranking; evaluation of RAG.
+- Multimodal: vision-language models, TTS/ASR basics; VAEs, GANs, diffusion (overview).
+- Evaluation: task metrics, hallucination/factuality/toxicity tests, adversarial prompts.
+- Optimization: quantization, distillation, pruning, throughput/latency trade-offs.
+
+7) MLOps / LLMOps & Production
+
+- Experiment tracking & versioning: MLflow/W&B, DVC.
+- Data & training pipelines: Airflow/Prefect; reproducibility.
+- Serving & APIs: FastAPI/gRPC; batch vs. real-time; streaming.
+- Deployment: Docker, Kubernetes; autoscaling; cost management.
+- Monitoring: model/feature drift, data quality, latency/SLOs, guardrails.
+- A/B testing, canary/blue-green deploys; rollback strategies.
+- Distributed training/inference: PyTorch Distributed, DeepSpeed/Accelerate, Ray.
+
+8) Systems & Architecture for AI
+
+- Systems design for AI: caching, rate-limits, queueing; CPU/GPU/TPU basics.
+- Storage choices: object stores, OLTP/OLAP, vector DB integration.
+- Security: authn/z, secrets, API security, privacy by design.
+
+9) Application Domains (pick a couple to go deep)
+
+- NLP (classification, NER, summarization, QA, agents).
+- Computer vision (classification, detection, segmentation).
+- Recommenders & ranking.
+- Time series/forecasting & anomaly detection.
+
+(Nice-to-have) RL & autonomous systems.
+
+10) Safety, Ethics, and Policy
+
+- Bias/fairness, explainability, red-teaming.
+- Privacy & data protection; secure model usage.
+- Model governance & auditability; awareness of emerging regulations (e.g., EU-style AI acts).
+
+11) Portfolio & Projects (end-to-end)
+
+- Clean ML system on tabular data with CI/CD and monitoring.
+- RAG chatbot with evals and guardrails, deployed behind an API.
+- Fine-tune a small open LLM with LoRA/QLoRA; compare to base.
+- Vision model with transfer learning; deploy for inference.
+- Recommender or ranking pipeline; A/B experiment.
+- Writeups: problem, data, decisions, metrics, costs, post-mortems.
+
+12) Nice-to-Have Advanced Theory
+
+- Convex optimization, information theory, numerical stability.
+- Distributed systems & streaming (Kafka/Flink).
+- Hardware awareness: memory bandwidth, quantization trade-offs.

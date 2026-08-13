@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from database import init_db
+from app.database import init_db
+from app.router.contract import router as contract_router 
+
 
 @asynccontextmanager
 async def startup_event():
@@ -11,6 +13,8 @@ app = FastAPI(
     description='AI-Powered Contract Analysis using Gemini',
     version='1.0.0'
 )
+
+app.include_router(contract_router)
 
 @app.get('/')
 def root():
