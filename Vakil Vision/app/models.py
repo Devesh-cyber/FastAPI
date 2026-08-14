@@ -7,12 +7,10 @@ class Contract(BaseModel):
     id: Optional[str] = None
     filename: str
     original_name: str
-    upload_date: str = ''
+    upload_date: datetime = Field(default_factory=datetime.now)
     text_content: str  = ''
     page_count: int = 0
     word_count: int = 0
     status: str = 'uploaded'
 
-    def model_post_init(self, context):
-       if not self.upload_date:
-           self.upload_date = datetime.now()
+   

@@ -5,13 +5,15 @@ from app.router.contract import router as contract_router
 
 
 @asynccontextmanager
-async def startup_event():
+async def startup_event(app: FastAPI):
     init_db()
+    yield
 
 app = FastAPI(
     title='Vakeel Contracts API',
     description='AI-Powered Contract Analysis using Gemini',
-    version='1.0.0'
+    version='1.0.0',
+    lifespan=startup_event
 )
 
 app.include_router(contract_router)

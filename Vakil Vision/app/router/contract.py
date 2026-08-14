@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 import os
 import uuid
+from bson import ObjectId
 from app.config import ALLOWED_EXTENSIONS, UPLOAD_DIR, MAX_SIZE_IN_MB
 from app.models import Contract
 from app.service.document_parser import extract_text
@@ -38,7 +39,7 @@ async def upload_contract(file: UploadFile = File(...)):
 
     # 4. Save file in our local machine
     os.makedirs(UPLOAD_DIR, exist_ok=True)
-    unique_filename = f'{uuid.uuid1()}{ext}'
+    unique_filename = f'{uuid.uuid4()}{ext}'
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
     
     with open(file_path, 'wb') as f:
@@ -67,3 +68,36 @@ async def upload_contract(file: UploadFile = File(...)):
         'id' : contract_id
         }
     
+
+@router.get('/')
+async def list_contracts():
+    '''
+    List all the coontract from the db
+    '''
+
+    contracts = []
+    for doc in contracts_collection.find({},{'text_content':0}):
+        contract = Contract(**doc)
+        contract.id = str(doc['_id'])
+        contracts.append(contract.model_dump())
+    return {'Contracts' : contracts}
+
+
+@router.get('/{contract_id}')
+async def contract_by_id(contract_id):
+    '''
+    Fetch contract based on id
+    '''
+    if not ObjectId.is_valid(contract_id):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid contract ID"
+    )
+
+    doc = contracts_collection.find_one({'_id': ObjectId(contract_id)})
+    if not doc:
+        raise HTTPException(status_code=404, detail=f'No data with {contract_id} in the db')
+    contract = Contract(**doc)
+    contract.id = str(doc['_id'])
+    return {'Contract' : contract.model_dump()}
+
