@@ -1,0 +1,181 @@
+GIT & GITHUB DETAILED SUMMARY NOTES (TXT VERSION)
+
+WHAT IS GIT?
+
+Git is a distributed version control system.
+
+Tracks changes in code and lets you revert, branch, and collaborate.
+
+Stores snapshots of your project at each commit.
+
+WHAT IS GITHUB?
+
+GitHub is an online hosting service for Git repositories.
+
+Lets you store code in the cloud, showcase projects, collaborate, and manage issues & pull requests.
+
+INSTALLING GIT ON WINDOWS
+
+Steps:
+
+Download from https://git-scm.com/
+
+Run installer → keep defaults unless needed.
+
+Important choices:
+
+Add Git to PATH.
+
+Choose main as default branch.
+
+Select VS Code or Notepad as editor.
+
+Verify install: git --version
+
+FIRST-TIME GIT CONFIGURATION
+
+Commands: git config --global user.name "Your Name" git config --global user.email "your_email@example.com" git config --global init.defaultBranch main
+
+Check: git config --global --list
+
+CORE GIT CONCEPTS
+
+Repository = folder containing project + .git folder. Working Directory = actual project files. Staging Area = files prepared for commit. Commit = snapshot of project state. Branch = independent development line. Remote = online version of repo (GitHub).
+
+File lifecycle: Untracked → Tracked → Staged → Committed
+
+CREATING A LOCAL REPOSITORY
+
+mkdir my-project cd my-project git init git status
+
+BASIC EVERYDAY COMMANDS
+
+STATUS: git status
+
+ADDING FILES: git add file.py git add .
+
+COMMITTING: git commit -m "message"
+
+VIEW HISTORY: git log git log --oneline git log --oneline --graph --all
+
+VIEW CHANGES: git diff git diff --staged
+
+RENAME/DELETE: git mv old.py new.py git rm file.py
+
+BRANCHING & MERGING
+
+CREATE BRANCH: git branch feature-1 git switch feature-1 git switch -c feature-1 (create + switch)
+
+LIST BRANCHES: git branch
+
+MERGE: git switch main git pull git merge feature-1 git branch -d feature-1
+
+CONNECTING TO GITHUB
+
+Create repo on GitHub.
+
+Copy remote URL.
+
+ADD REMOTE: git remote add origin git branch -M main git push -u origin main
+
+CHECK REMOTE: git remote -v
+
+HTTPS vs SSH:
+
+HTTPS: simple, uses password/token.
+
+SSH: key-based, no repeated login.
+
+PUSHING & PULLING
+
+PUSH: git push git push -u origin main
+
+PULL: git pull
+
+CLONING A REPO
+
+git clone cd repo-name git status
+
+.gitignore
+
+Common Python ignore: pycache/ *.pyc venv/ .env/ .vscode/ .idea/ .DS_Store
+
+To ignore tracked file: git rm --cached file
+
+UNDOING MISTAKES (RESET/REVERT)
+
+UNDO LAST COMMIT (KEEP CHANGES): git reset --soft HEAD~1
+
+UNDO LAST COMMIT (UNSTAGE CHANGES): git reset HEAD~1
+
+DELETE COMMIT + CHANGES (DANGEROUS): git reset --hard HEAD~1
+
+UNSTAGE FILE: git reset HEAD file.py
+
+SAFE UNDO WITH REVERT: git revert
+
+REFLOG (RECOVER LOST COMMITS): git reflog
+
+STASHING
+
+Save work temporarily: git stash git stash list git stash pop git stash apply
+
+TAGS (VERSION MARKERS)
+
+Create tag: git tag v1.0 git tag -a v1.0 -m "message"
+
+Push tags: git push origin v1.0 git push origin --tags
+
+BASIC PULL REQUEST WORKFLOW
+
+git switch main
+
+git pull
+
+git switch -c feature-xyz
+
+Work → git add . → git commit
+
+git push -u origin feature-xyz
+
+Create PR on GitHub.
+
+Merge PR.
+
+git switch main → git pull
+
+git branch -d feature-xyz
+
+DAILY WORKFLOW SUMMARY
+
+Start: git pull
+
+Work on feature branch
+
+Commit small changes frequently
+
+Push regularly
+
+Use PR workflow even when solo
+
+Merge, delete branch, update main
+
+QUICK COMMAND CHEAT SHEET
+
+INIT: git init
+
+STATUS: git status
+
+ADD + COMMIT: git add . git commit -m "msg"
+
+BRANCHING: git branch git switch git switch -c git merge
+
+REMOTE: git remote add origin git push git pull git clone
+
+UNDO: git reset HEAD file git reset --soft HEAD~1 git reset --hard HEAD~1 git revert git reflog
+
+STASH: git stash git stash pop
+
+TAGS: git tag git push origin --tags
+
+END OF NOTES
